@@ -54,6 +54,8 @@ const Home = ({ marketplace, nft }) => {
 
   return (
     <div>
+      <h1>LX's NFT Collections</h1>
+
       {loading ? (
         <h2>loading... </h2>
       ) : (

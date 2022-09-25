@@ -7,7 +7,7 @@ import NftAbi from "../contractsData/NFT.json"
 
 const Create = ({ marketplace, nft, account }) => {
   const [quantity, setQuantity] = useState(1)
-
+  const [loading, setLoading] = useState(false)
   const perMintCost = 0.000101714
   const calculatedMintCost = quantity * perMintCost
 
@@ -21,12 +21,15 @@ const Create = ({ marketplace, nft, account }) => {
         signer
       )
       try {
+        setLoading(true)
         const response = await contract.mint(quantity, {
           value: ethers.utils
             .parseEther(calculatedMintCost.toString())
             .toString(),
         })
         console.log("Response: ", response)
+        setLoading(false)
+        window.location.replace("/")
       } catch (error) {
         console.log("Error: ", error)
       }
@@ -35,35 +38,39 @@ const Create = ({ marketplace, nft, account }) => {
 
   return (
     <div className="container-fluid mt-5">
-      <div className="row">
-        <main
-          role="main"
-          className="col-lg-12 mx-auto"
-          style={{ maxWidth: "1000px" }}
-        >
-          <div className="content mx-auto">
-            <Form.Group cclassName="mb-3" controlId="formBasicEmail">
-              <Form.Label>Quantity</Form.Label>
+      {loading ? (
+        <h3>Minting in-progress...</h3>
+      ) : (
+        <div className="row">
+          <main
+            role="main"
+            className="col-lg-12 mx-auto"
+            style={{ maxWidth: "1000px" }}
+          >
+            <div className="content mx-auto">
+              <Form.Group cclassName="mb-3" controlId="formBasicEmail">
+                <Form.Label>Quantity</Form.Label>
 
-              <Form.Control
-                type="number"
-                placeholder="Number of NFTs to be minted"
-                onChange={(e) => setQuantity(e.target.value)}
-                value={quantity}
-                size="lg"
-              />
-              <Form.Text className="text-muted">
-                Enter the number of NFTs that will be minted
-              </Form.Text>
-              <div className="d-grid px-0">
-                <Button onClick={createNFT} variant="primary" size="lg">
-                  Create and Mint my NFT!
-                </Button>
-              </div>
-            </Form.Group>
-          </div>
-        </main>
-      </div>
+                <Form.Control
+                  type="number"
+                  placeholder="Number of NFTs to be minted"
+                  onChange={(e) => setQuantity(e.target.value)}
+                  value={quantity}
+                  size="lg"
+                />
+                <Form.Text className="text-muted">
+                  Enter the number of NFTs that will be minted
+                </Form.Text>
+                <div className="d-grid px-0">
+                  <Button onClick={createNFT} variant="primary" size="lg">
+                    Create and Mint my NFT!
+                  </Button>
+                </div>
+              </Form.Group>
+            </div>
+          </main>
+        </div>
+      )}
     </div>
   )
 }
